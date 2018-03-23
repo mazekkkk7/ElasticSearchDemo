@@ -1,0 +1,87 @@
+{{!关键字搜索医生，分页,匹配医生的姓名，职称，所在地，医院，科室，简介，成果，擅长}}
+{
+    "query": {
+        "bool": {
+            "minimum_should_match":"50%",
+            "must": [
+               {
+                   "term": {
+                      "isExpert": {
+                         "value": "true"
+                      }
+                   }
+               },
+               {
+                   "term": {
+                      "isReal": {
+                         "value": "true"
+                      }
+                   }
+               }
+            ],
+          "should": [
+    			      {{#cityCode}}
+                { "terms":{"area.code":[{{#cityCodeList}}"{{.}}",{{/cityCodeList}}"{{cityCode}}"]} },
+                {{/cityCode}}
+                {{#keyword}}
+                {
+        					"match": {
+        						"name": {
+                                "query": "{{keyword}}", 
+                                "minimum_should_match":"10%"      
+                            }
+        					}
+        				},
+        				{
+        					"match": {
+        						"hospital.name": {
+                                "query": "{{keyword}}", 
+                                "minimum_should_match":"10%"
+                                }
+        					}
+        				},
+                {
+                    "match": {
+                       "tags": {
+                           "query": "{{keyword}}",
+                           "minimum_should_match":"50%"
+                       }
+                    }
+                },
+                {{/keyword}}
+                {
+                    "term": {
+                       "_type": {
+                          "value": "es_doctor"
+                       }
+                    }
+                }
+
+            ]
+        }
+    },
+    "sort": [
+        {
+           "_score": {
+              "order": "desc"
+           }
+        },
+        {
+           "level.order": {
+              "order": "asc"
+           }
+        }
+    ],
+    "from": {{page}},
+    "size": {{pageSize}},
+    "_source": [
+        "{{source_uid}}",
+        "{{source_image}}",
+        "{{source_name}}",
+        "{{source_titleName}}",
+        "{{source_hospitalName}}",
+        "{{source_deptName}}",
+        "{{source_special}}",
+        "{{source_isOnline}}"
+    ]
+}

@@ -1,0 +1,93 @@
+{{! keywordDefaultSearch 关键字未查询到结果时默认推荐 默认显示科室数量 1000 聚合器不能使用分页(硬伤) }}
+{
+    "query": {
+        "bool": {
+            "minimum_should_match":"75%",
+            "must": [
+               {
+                   "term": {
+                      "isExpert": {
+                         "value": "true"
+                      }
+                   }
+               },
+               {
+                   "term": {
+                      "isReal": {
+                         "value": "true"
+                      }
+                   }
+               }
+            ],
+            "should": [
+                  {{#special}}
+                    {
+                        "match": {
+                           "tags": {
+                               "query": "{{.}}",
+                               "minimum_should_match":"10%"
+                           }
+                        }
+                    },
+                  {{/special}}
+                  {
+                      "term": {
+                         "_type": {
+                            "value": "es_doctor_false"
+                         }
+                      }   
+                  }
+            ],
+            "filter": [
+                {{#deptCode}}
+                {
+                    "nested" : {
+                    "path" : "dept",
+                        "query" : {
+                            "bool" : {
+                                "must" : [
+                                { "term" : {"dept.code" : "{{deptCode}}"} }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {{/deptCode}}
+                {{#cityCode}}
+                    { "terms":{"area.code":[{{#cityCodeList}}"{{.}}",{{/cityCodeList}}"{{cityCode}}"]} },
+                {{/cityCode}}
+                {
+                      "term": {
+                         "_type": {
+                            "value": "es_doctor"
+                         }
+                      }   
+                }
+            ]
+        }
+    },
+    "sort": [
+        {
+           "_score": {
+              "order": "desc"
+           }
+        },
+        {
+           "level.order": {
+              "order": "asc"
+           }
+        }
+    ],
+    "from": {{page}},
+    "size": {{pageSize}},
+    "_source": [
+        "{{source_uid}}",
+        "{{source_image}}",
+        "{{source_name}}",
+        "{{source_titleName}}",
+        "{{source_hospitalName}}",
+        "{{source_deptName}}",
+        "{{source_special}}",
+        "{{source_isOnline}}"
+    ]
+}

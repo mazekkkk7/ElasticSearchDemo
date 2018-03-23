@@ -1,0 +1,36 @@
+{{!根据科室id查询专家，匹配条件为科室id，默认条件为专家，按照患者评分进行排序}}
+{
+  "query" : {
+    "bool" : {
+      "must" : [
+        {
+          "term" : {
+            "name" : {
+              "value" : "{{name}}",
+              "boost" : 1.0
+            }
+          }
+        },
+        {
+          "term" : {
+            "isExpert" : {
+              "value" : true,
+              "boost" : 1.0
+            }
+          }
+        }
+      ],
+      "disable_coord" : false,
+      "adjust_pure_negative" : true,
+      "boost" : 1.0
+    }
+  },
+  "sort" : [
+    {
+      "score" : {
+        "order" : "desc"
+      }
+    }
+  ], "_source":["{{source_name}}","{{source_hospital}}"],
+  "ext" : { }
+}

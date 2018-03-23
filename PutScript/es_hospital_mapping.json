@@ -1,0 +1,183 @@
+/**
+ * mapping名称es_hospital 医院
+ * code 医院代码
+ * name 医院名称 
+ * icon 医院图标
+ * image 医院组图
+ * phone 医院电话
+ * summary 医院简介
+ * score 医院评分
+ * expertCount 专家数量
+ * address 医院地址
+ * isInsurance 是否定点医保
+ * coordinates 经纬度(lat、lon)
+ * type 医院类型
+ * type.code 医院代码
+ * type.name 医院名称
+ * level 医院级别
+ * level.value 级别编号
+ * level.name 级别名称
+ * area 地区
+ * area.code 地区代码
+ * area.name 地区名称
+ * dept 医院科室
+ * dept.code 科室代码
+ * dept.name 科室名称
+ * dept.expertCount 科室专家数
+ * dept.isSpecial 是否特色
+ * dept.isStandard 是否标准
+ * dept.parentName 父级科室名称
+ * dept.createTime 科室创建时间
+ * dept.updateTime 科室更新时间
+ * createTime 创建时间
+ * updateTime 更新时间
+ */
+POST /skykingkong_es_dev/es_hospital/_mapping
+{
+    "es_hospital": {
+        "_all": {
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_max_word",
+            "term_vector": "no",
+            "store": "false"
+        },
+        "properties": {
+
+            "code": {
+                "type": "text"
+            },
+            "name": {
+                "type": "text",
+                "analyzer": "ik_max_word",
+                "search_analyzer": "ik_max_word",
+                "include_in_all": "true"
+            },
+            "icon": {
+                "type": "text"
+            },
+            "image": {
+                "type": "text"
+            },
+            "phone": {
+                "type": "text"
+            },
+            "summary": {
+                "type": "text"
+            },
+            "score": {
+                "type": "double"
+            },
+            "expertCount": {
+                "type": "integer"
+            },
+            "address": {
+                "type": "text"
+            },
+            "isInsurance": {
+                "type": "boolean"
+            },
+            "coordinates": {
+                "type": "geo_point"
+            },
+            "type": {
+                  "properties": {
+                     "code": {
+                        "type": "text"
+                     },
+                     "hospitalSort": {
+                        "type": "long"
+                     },
+                     "isHot": {
+                        "type": "text",
+                        "fields": {
+                           "keyword": {
+                              "type": "keyword",
+                              "ignore_above": 256
+                           }
+                        }
+                     },
+                     "isRecommend": {
+                        "type": "long"
+                     },
+                     "name": {
+                        "type": "text",
+                        "analyzer": "ik_max_word",
+                        "include_in_all": true
+                     }
+                  }
+               },
+            "level": {
+                "properties": {
+                    "value": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "text",
+                        "analyzer": "ik_max_word",
+                        "search_analyzer": "ik_max_word",
+                        "include_in_all": "true"
+                    }
+                }
+            },
+            "area": {
+                "properties": {
+                    "value": {
+                        "type": "text",
+                        "analyzer": "ik_max_word",
+                        "search_analyzer": "ik_max_word",
+                        "include_in_all": "true"
+                    }
+                }
+            },
+            "dept": {
+                  "type":"nested",
+                  "properties": {
+                     "code": {
+                        "type": "text",
+                        "fielddata": true
+                     },
+                     "expertCount": {
+                        "type": "long"
+                     },
+                     "isSpecial": {
+                        "type": "long"
+                     },
+                     "isStandard": {
+                        "type": "long"
+                     },
+                     "name": {
+                        "type": "text",
+                        "analyzer": "ik_max_word",
+                        "include_in_all": true
+                     },
+                     "parentName": {
+                        "type": "text",
+                        "fields": {
+                           "keyword": {
+                              "type": "keyword",
+                              "ignore_above": 256
+                           }
+                        }
+                     },
+                     "createTime":{
+                        "type": "date",
+                        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+                     },
+                     "updateTime":{
+                        "type": "date",
+                        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+                     }
+                  }
+            },
+            "createTime":{
+                "type": "date",
+                "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+            },
+            "updateTime":{
+                "type": "date",
+                "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+            }
+
+        }
+    }
+}

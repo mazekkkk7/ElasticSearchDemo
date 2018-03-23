@@ -1,0 +1,39 @@
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "hospital.code": {
+              "value": "{{hospitalCode}}"
+            }
+          }
+        },
+        {
+                "nested" : {
+                "path" : "dept",
+                    "query" : {
+                        "bool" : {
+                            "must" : [
+                            { "term" : {"dept.code" : "{{deptCode}}"} }
+                            ]
+                        }
+                    }
+                }
+          },
+            
+        {
+          "term": {
+            "isExpert": {
+              "value": true,
+              "boost": 1.0
+            }
+          }
+        }
+      ]
+    }
+  },
+  "_source": [
+    ""
+  ]
+}

@@ -1,0 +1,120 @@
+{{! 接口名称：
+		默认推荐专家}}
+{{!	接口路径：
+		com.jkgj.skykingkong.search.server.service.impl.DoctorServiceImpl#defaultQuery}}
+{{!	查询规则：
+		按照匹配程度，医生评分降序排序}}
+{{!	返回结果：
+		编号【id】、姓名【name】、头像【image】、职称【level.name】、
+		所属医院名称【hospital.name】、所属科室名称【dept.name】、
+		擅长【tags】、评分【score】、问诊量【servicePerson】、预约量【orderCount】}}
+
+{
+  "post_filter" : {
+    "bool" : {
+      "must" : [
+        {
+          "term" : {
+            "isExpert" : {
+              "value" : true,
+              "boost" : 1.0
+            }
+          }
+
+        },
+        {
+          "term" : {
+            "isReal" : {
+              "value" : true,
+              "boost" : 1.0
+            }
+          }
+        },
+        {
+          "bool" : {
+            "should" : [
+              {
+                "term" : {
+                  "isOpenVC" : {
+                    "value" : true,
+                    "boost" : 0.1
+                  }
+                }
+              },
+              {
+                "term" : {
+                  "isOpenRET" : {
+                    "value" : true,
+                    "boost" : 0.5
+                  }
+                }
+              }
+            ],
+            "disable_coord" : false,
+            "adjust_pure_negative" : true,
+            "boost" : 1.0
+          }
+        }
+      ],
+      "disable_coord" : false,
+      "adjust_pure_negative" : true,
+      "boost" : 1.0
+    }
+  },
+  "from":{{page}},
+  "size":{{pageSize}},
+  "sort" : [
+    {
+      "_score" : {
+        "order" : "desc"
+      }
+    },
+    {
+      "level.order" : {
+        "order" : "asc"
+      }
+    },
+    {
+      "score" : {
+        "order" : "desc"
+      }
+    }
+  ],
+  "_source":
+	[
+	{{#source_doctorUid}}
+	"{{source_doctorUid}}",
+	{{/source_doctorUid}}
+	{{#source_uid}}
+	"{{source_uid}}",
+	{{/source_uid}}
+	{{#source_titleName}}
+	"{{source_titleName}}",
+	{{/source_titleName}}
+	"{{source_image}}",
+	{{#source_title}}
+	"{{source_title}}",
+	{{/source_title}}
+	"{{source_hospitalName}}",
+	{{#source_departName}}
+	"{{source_departName}}",
+	{{/source_departName}}
+	{{#source_deptName}}
+	"{{source_deptName}}",
+	{{/source_deptName}}
+	"{{source_special}}",
+	{{#source_score}}
+	"{{source_score}}",
+	{{/source_score}}
+	{{#source_serviceCount}}
+	"{{source_serviceCount}}",
+	{{/source_serviceCount}}
+	{{#source_isOnline}}
+	"{{source_isOnline}}",
+	{{/source_isOnline}}
+	{{#source_orderCount}}
+	"{{source_orderCount}}",
+	{{/source_orderCount}}
+	"{{source_name}}"],
+  "ext" : { }
+}

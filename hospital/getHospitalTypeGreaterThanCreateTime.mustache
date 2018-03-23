@@ -1,0 +1,21 @@
+{{!查询新添加的医院根据创建时间倒排}}
+{
+    {{#timestamp}}
+    "query": {
+        "range": {
+           "createTime": {
+              "gt": "{{timestamp}}"
+           }
+        }
+    },
+    {{/timestamp}}
+    "from": {{page}},
+    "size": {{pageSize}},
+    "sort": [
+       {
+          "createTime": {
+             "order": "desc"
+          }
+       }
+    ]
+}

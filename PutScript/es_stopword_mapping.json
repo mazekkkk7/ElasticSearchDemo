@@ -1,0 +1,24 @@
+/**
+ * mapping名称es_stopword 停止词
+ * stopword 停止词
+ * isStopWord 是否是停止词
+ */
+POST /skykingkong_es_dev/es_stopword/_mapping
+{
+    "es_stopword": {
+        "_all": {
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_max_word",
+            "term_vector": "no",
+            "store": "false"
+        },
+        "properties": {
+			"stopword": {
+                "type": "text"
+            },
+            "isStopWord":{
+                "type":"integer"
+            }
+        }
+    }
+}

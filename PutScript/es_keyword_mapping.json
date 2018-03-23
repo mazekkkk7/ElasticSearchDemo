@@ -1,0 +1,32 @@
+/**
+ * mapping名称es_keyword 关键字
+ * keyword 关键字
+ * searchType 搜索类型(医生、医院) 
+ * frequency 频次
+ * isDic 是否标记为词典
+ */
+POST /skykingkong_es_dev/es_keyword/_mapping
+{
+    "es_keyword": {
+        "_all": {
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_max_word",
+            "term_vector": "no",
+            "store": "false"
+        },
+        "properties": {
+			"keyword": {
+                "type": "text"
+            },
+            "searchType": {
+                "type": "text"
+            },
+			"frequency":{
+				"type":"integer"
+			},
+            "isDic":{
+                "type":"boolean"
+            }
+        }
+    }
+}

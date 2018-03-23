@@ -1,0 +1,19 @@
+{{!查询系统常见问题}}
+{
+    {{#keyword}}
+    "query": {
+        "match": {
+           "title": "{{keyword}}"
+        }
+    },
+    {{/keyword}}
+    "from": {{page}},
+    "size": {{pageSize}}, 
+    "sort": [
+       {
+          "_score": {
+             "order": "desc"
+          }
+       }
+    ]
+}

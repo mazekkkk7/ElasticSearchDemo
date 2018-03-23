@@ -1,0 +1,180 @@
+{{! 接口名称：
+    义诊专家列表}}
+{{! 查询规则：
+    地区编号、医院名称、科室编号作为过滤条件（非必选），
+    患者病历-病症描述、诊断疾病模糊匹配医生擅长（非必选）。
+    按照匹配程度，医生评分降序排序}}
+{{! 返回结果：
+    编号【id】、姓名【name】、头像【image】、职称【level.name】、
+    所属医院名称【hospital.name】、所属科室名称【dept.name】、
+    擅长【tags】、评分【score】、问诊量【servicePerson】、预约量【orderCount】}}
+{
+  "query": {
+    "bool": {
+        "minimum_should_match":"75%",
+        "should": [
+            {{#keyword}}
+            {
+                "match":{
+                    "name":{
+                        "query": "{{keyword}}",
+                        "minimum_should_match":"10%"
+                    }
+                }
+            },
+            {
+                "match":{
+                    "hospital.name":{
+                        "query": "{{keyword}}",
+                        "minimum_should_match":"10%"
+                    }
+                }
+            },
+            {{/keyword}}
+            {{#symptom}}
+            {
+                "match":{
+                    "tags":{
+                        "query": "{{symptom}}",
+                        "minimum_should_match":"10%"
+                    }
+                }
+            },
+            {{/symptom}}
+            {{#diagnose}}
+            {
+                "match":{
+                    "tags":{
+                        "query": "{{diagnose}}",
+                        "minimum_should_match":"10%"
+                    }
+                }
+            },
+            {{/diagnose}}
+            {
+                "term":{
+                    "_type":"es_doctor"
+                }
+            }
+        ], 
+        "filter":[
+            {{#hospitalName}}
+            {
+                "match_phrase":{
+                    "hospital.name":"{{hospitalName}}"
+                }
+            },
+            {{/hospitalName}}
+            {{#deptCode}}
+            {
+                "nested" : {
+                "path" : "dept",
+                    "query" : {
+                        "bool" : {
+                            "must" : [
+                            { "term" : {"dept.code" : "{{deptCode}}"} }
+                            ]
+                        }
+                    }
+                }
+            },
+            {{/deptCode}}
+            {{#cityCode}}
+            { "terms":{"area.code":[{{#cityCodeList}}"{{.}}",{{/cityCodeList}}"{{cityCode}}"]} },
+            {{/cityCode}}
+            {
+                "term":{
+                    "isReal":true
+                }
+            },
+            {
+                "term":{
+                    "_type":"es_doctor"
+                }
+            },
+            {
+                "term":{
+                    "isExpert":true
+                }
+            },
+            {
+                "term": {
+                   "isOpenFC": {
+                      "value": "true"
+                   }
+                }
+            }
+
+        ]
+    }
+  },
+  "from":{{page}},
+  "size":{{pageSize}}, 
+  "sort" : [
+    {{#defaultRecomment}}
+      {
+        "level.order" : {
+          "order" : "asc"
+        }
+      },
+      {
+        "_score" : {
+          "order" : "desc"
+        }
+      }
+    {{/defaultRecomment}}
+    {{#synthesise}}
+      {
+        "level.order" : {
+          "order" : "asc"
+        }
+      },
+      {
+        "score" : {
+          "order" : "desc"
+        }
+      },
+      {
+        "_score" : {
+        "order" : "desc"
+      }
+    }
+    {{/synthesise}}
+    {{#expert}}
+      {
+        "level.order" : {
+          "order" : "asc"
+        }
+      },
+      {
+        "_score" : {
+          "order" : "desc"
+        }
+      }
+    {{/expert}}
+    {{#todaySurplus}}
+      {
+        "todayLeftCount" : {
+          "order" : "desc"
+        }
+      },
+      {
+        "_score" : {
+          "order" : "desc"
+        }
+      }
+    {{/todaySurplus}}
+    {{#createTimeDesc}}
+      {
+        "createTime" : {
+          "order" : "desc"
+        }
+      },
+      {
+        "_score" : {
+          "order" : "desc"
+        }
+      }
+    {{/createTimeDesc}}
+  ]
+}

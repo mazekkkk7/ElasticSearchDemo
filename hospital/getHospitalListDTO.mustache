@@ -1,0 +1,31 @@
+{{!根据医院分类查询医院列表}}
+{
+  "query" : {
+    "bool" : {
+      "must" : [
+        {{#typeCode}}
+        {
+          "term" : {
+            "type.code" : {
+              "value" : "{{typeCode}}"
+            }
+          }
+        }
+        {{/typeCode}}
+      ],
+      "filter":[
+          {
+              "term":{
+                  "type.isRecommend":1
+              }
+          }
+      ]
+    }
+  },
+  "size" : 10000,
+  "sort" : [
+    {
+        "type.hospitalSort":"asc"
+    }
+  ]
+}

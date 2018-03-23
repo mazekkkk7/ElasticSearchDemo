@@ -1,0 +1,54 @@
+{{!查询医院列表根据查询条件}}
+{
+  "query" : {
+    "bool" : {
+      "minimum_should_match":"100%",
+      "should": [ 
+            {{#keyword}}
+            {
+                "match":{
+                    "name":{
+                        "query": "{{keyword}}",
+                        "minimum_should_match":"75%"
+                    }
+                }
+            }
+            {{/keyword}}
+      ],
+      "filter": [ 
+        {{#isTopFirst}}
+        {
+            "range" : {
+                "level.value" : {
+                    "gt" : 0
+                }
+            }            
+        },
+        {{/isTopFirst}}
+        {{#cityCode}}
+        { "terms":  { "area.code": [{{#cityCodeArr}}"{{.}}",{{/cityCodeArr}}"{{cityCode}}"]}},
+        {{/cityCode}}
+        {{#hospitalCategoryCode}}
+          { "term":  { "type.code": "{{hospitalCategoryCode}}" }},
+        {{/hospitalCategoryCode}}
+        { "term":  { "_type": "es_hospital" }}
+      ]
+    }
+  },
+  "from":{{page}},
+  "size":{{pageSize}},
+  "sort" : [
+    {{#isTopFirst}}
+    {
+      "level.value" : {
+        "order" : "asc"
+      }
+    },
+    {{/isTopFirst}}
+    {
+      "_score" : {
+        "order" : "desc"
+      }
+    }
+    ]
+}

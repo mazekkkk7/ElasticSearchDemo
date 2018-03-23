@@ -1,0 +1,41 @@
+{{!查询关键热词根据频道列表,提供给爬虫}}
+{
+  "query": {
+    "bool": {
+      "should": [
+        {{#keywordStringList}}
+        {
+          "term" : {
+            "searchType" : {
+              "value" : "{{.}}"
+            }
+          }
+        },
+        {{/keywordStringList}}
+        {
+          "term": {
+            "_type": {
+              "value": "es_hospital_false"
+            }
+          }
+        }
+      ],
+      "filter":[
+          {
+              "term":{
+                  "isDic":true
+              }
+          }
+      ]
+    }
+  },
+  "from":{{page}},
+  "size":{{pageSize}},
+  "sort": [
+    {
+      "frequency": {
+        "order": "desc"
+      }
+    }
+  ]
+}
