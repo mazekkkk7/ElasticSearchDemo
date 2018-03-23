@@ -1,0 +1,20 @@
+{{! 接口名称：
+		默认推荐医院}}
+{{!	接口路径：
+		com.jkgj.skykingkong.search.facade.service.HospitalSearchService#defaultQuery}}
+{
+  "from": {{page}},
+	"size": {{pageSize}}, 
+	"sort" : [
+		{
+			"_score" : {
+				"order" : "desc"
+			}
+		},
+		{
+			"score" : {
+				"order" : "desc"
+			}
+		}
+	]
+}

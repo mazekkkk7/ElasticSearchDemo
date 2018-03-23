@@ -1,0 +1,53 @@
+{{!关键字搜索医院，分页,匹配医院的名称，简介，地址，特色科室名，分类名，级别名，地区名}}
+{
+    "query":{
+        "bool": {
+            "should": [
+               {{#keyword}}
+               {
+                   "match": {
+                      "name": {
+                          "query": "{{keyword}}",
+                          "boost":{{hospitalBoost}}
+                      }
+                   }
+               },
+               {
+                 "nested": {
+                    "path": "dept",
+                    "query": {
+                       "match": {
+                          "dept.name": {
+                             "query": "{{keyword}}",
+                             "boost": {{deptBoost}}
+                          }
+                       }
+                    }
+                 }
+               }
+               {{/keyword}}
+               {
+                   "term": {
+                      "_type": {
+                         "value": "es_hospital_false"
+                      }
+                   }
+               }
+            ]
+        }
+	},
+	"from": {{page}},
+	"size": {{pageSize}}, 
+	"sort" : [
+		{
+			"_score" : {
+				"order" : "desc"
+			}
+		},
+		{
+			"score" : {
+				"order" : "desc"
+			}
+		}
+	]
+}

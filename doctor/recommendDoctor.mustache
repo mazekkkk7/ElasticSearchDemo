@@ -1,0 +1,266 @@
+{{! 接口名称：
+    自动推荐专家}}
+{{! 接口路径：
+    com.jkgj.skykingkong.search.server.service.impl.DoctorServiceImpl#recommendDoctor}}
+{{! 查询规则：
+    地区编号、医院名称、科室编号作为过滤条件（非必选），
+    患者病历-病症描述、诊断疾病模糊匹配医生擅长（非必选）。
+    按照匹配程度，医生评分降序排序}}
+{{! 返回结果：
+    编号【id】、姓名【name】、头像【image】、职称【level.name】、
+    所属医院名称【hospital.name】、所属科室名称【dept.name】、
+    擅长【tags】、评分【score】、问诊量【servicePerson】、预约量【orderCount】}}
+{
+  "query": {
+    "bool": {
+        "should": [
+            {{#keyword}}
+            {
+              "match": {
+                "hospital.name": {
+                  "query": "{{keyword}}",
+                  "boost": {{hospitalBoost}}
+                }
+              }
+            },
+            {
+              "match": {
+                "name": {
+                  "query": "{{keyword}}",
+                  "boost": {{doctorBoost}}
+                }
+              }
+            },
+            {
+               "nested": {
+                  "path": "dept",
+                  "query": {
+                     "match": {
+                        "dept.name": {
+                           "query": "{{keyword}}",
+                           "boost": {{deptBoost}}
+                        }
+                     }
+                  }
+               }
+            },
+            {{/keyword}}
+            {
+                "term":{
+                    "_type":"es_doctor"
+                }
+            }
+        ], 
+        "filter":[
+            {{#diagnose}}
+            {
+                "match":{
+                    "tags":{
+                        "query": "{{diagnose}}"
+                    }
+                }
+            },
+            {{/diagnose}}
+            {{#hospitalName}}
+            {
+                "match_phrase":{
+                    "hospital.name":"{{hospitalName}}"
+                }
+            },
+            {{/hospitalName}}
+            {{#deptCode}}
+            {
+                "nested" : {
+                "path" : "dept",
+                "query": {
+                     "bool": {
+                        "must": [
+                           {
+                             "terms": {
+                                "dept.code": [
+                                   {{#deptCodeList}}"{{.}}",{{/deptCodeList}}
+                                   "{{deptCode}}"
+                                ]
+                             }
+                           }
+                        ]
+                     }
+                  }
+                }
+            },
+            {{/deptCode}}
+            {{#referenceDeptCode}}
+            {
+                "nested" : {
+                "path" : "dept",
+                "query": {
+                     "bool": {
+                        "must": [
+                           {
+                             "terms": {
+                                "dept.code": [
+                                   {{#deptCodeList}}"{{.}}",{{/deptCodeList}}
+                                   "{{referenceDeptCode}}"
+                                ]
+                             }
+                           }
+                        ]
+                     }
+                  }
+                }
+            },
+            {{/referenceDeptCode}}
+            {{#cityCode}}
+            {
+               "terms": {
+                  "area.code": [
+                     {{#cityCodeList}}"{{.}}",{{/cityCodeList}}
+                     "{{cityCode}}"
+                  ]
+               }
+            },
+            {{/cityCode}}
+            {
+                "term":{
+                    "isReal":true
+                }
+            },
+            {
+                "term":{
+                    "isExpert":true
+                }
+            },
+            {
+               "range": {
+                  "rank": {
+                     "gte": 3
+                  }
+               }
+            },
+            {
+                "term":{
+                    "_type":"es_doctor"
+                }
+            }
+
+        ]
+    }
+  },
+  "from":{{page}},
+  "size":{{pageSize}}, 
+  "sort" : [
+    {{#defaultRecomment}}
+      {
+        "_score" : {
+          "order" : "desc"
+        }
+      },
+      {
+        "level.order" : {
+          "order" : "asc"
+        }
+      },
+    {{/defaultRecomment}}
+    {{#synthesise}}
+      {
+        "_score" : {
+          "order" : "desc"
+        }
+      },
+      {
+        "level.order" : {
+          "order" : "asc"
+        }
+      },
+    {{/synthesise}}
+    {{#expert}}
+      {
+        "level.order" : {
+          "order" : "asc"
+        }
+      },
+      {
+        "_score" : {
+          "order" : "desc"
+        }
+      },
+    {{/expert}}
+    {{#score}}
+      {
+          "score":{
+              "order": "desc"
+          }
+      },
+      {
+        "_score" : {
+          "order" : "desc"
+        }
+      },
+    {{/score}}
+    {{#orderCount}}
+      {
+        "orderCount":{
+            "order": "desc"
+        }
+      },
+      {
+        "_score" : {
+          "order" : "desc"
+        }
+      },
+    {{/orderCount}}
+    {{#serviceCount}}
+      {
+        "serviceCount":{
+            "order": "desc"
+        }
+      },
+      {
+        "_score" : {
+          "order" : "desc"
+        }
+      },
+    {{/serviceCount}}
+    {{#priceDesc}}
+      {
+        "vcPrice":{
+            "order": "desc"
+        }
+      },
+      {
+        "_score" : {
+          "order" : "desc"
+        }
+      },
+    {{/priceDesc}}
+    {{#priceAsc}}
+      {
+        "vcPrice":{
+            "order": "asc"
+        }
+      },
+      {
+        "_score" : {
+          "order" : "desc"
+        }
+      },
+    {{/priceAsc}}
+    {{#createTimeDesc}}
+      {
+        "createTime" : {
+          "order" : "desc"
+        }
+      },
+      {
+        "_score" : {
+          "order" : "desc"
+        }
+      },
+    {{/createTimeDesc}}
+      {
+        "_score" : {
+          "order" : "desc"
+        }
+      }
+  ]
+}

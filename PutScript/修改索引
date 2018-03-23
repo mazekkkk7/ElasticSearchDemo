@@ -1,0 +1,64 @@
+//设置fielddata 数据
+PUT /skykingkong_es_test/_mapping/es_doctor?update_all_types
+{
+    "properties": {
+            "dept": {
+                "properties": {
+                    "code":{
+                        "type":"text",
+                        "fielddata": true
+                    }
+                }
+            }
+    }
+}
+
+//替换图片
+POST /skykingkong_es_testnf/es_doctor/_update_by_query
+{
+  "script": {
+    "lang": "painless",
+    "inline": "ctx._source.image = ctx._source.image.replace('http://memberdata.jiukangguoji.com','http://memberdata.jiukangguoji.com1')"
+  },
+  "query": {
+    "match_all": {
+        
+    }
+  }
+}
+
+//根据条件更新数据
+POST twitter/_update_by_query
+{
+  "script": {
+    "source": "ctx._source.likes++",
+    "lang": "painless"
+  },
+  "query": {
+    "term": {
+      "user": "kimchy"
+    }
+  }
+}
+
+//索引复制 包含数据
+POST _reindex
+{
+  "source": {
+    "index": "twitter"
+  },
+  "dest": {
+    "index": "new_twitter"
+  }
+}
+
+//部分更新
+POST /ecommerce/producr/1001/_update
+{
+    "doc":{
+        "price":50.00
+    }
+}
+
+//查看本机的所有索引
+GET /_cat/indices?v

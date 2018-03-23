@@ -1,0 +1,48 @@
+{{! keywordDefaultSearch 关键字未查询到结果时默认推荐 默认显示科室数量 1000 聚合器不能使用分页(硬伤) }}
+{
+    "size": 0, 
+    "query": {
+        "bool":{
+            "must": [
+               {
+                   "term": {
+                      "isExpert": {
+                         "value": "true"
+                      }
+                   }
+               },
+               {
+                   "term": {
+                      "isReal": {
+                         "value": "true"
+                      }
+                   }
+               }
+            ]
+        }
+    }, 
+    "sort": [
+    {
+       "level.order": {
+        "order": "asc"
+       }
+     }
+    ],
+    "aggs":{
+        "distinct_dept": {
+        "terms": {
+        "field": "dept.code",
+            "size":1000
+        },"aggs": {
+              "rated": {
+              "top_hits": {
+                "sort": [{
+                  "level.order": {"order": "asc"}
+                }], 
+                "size": 1
+              }
+            }
+          }
+      }
+    }
+}

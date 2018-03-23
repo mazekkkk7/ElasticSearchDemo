@@ -1,0 +1,184 @@
+结构脚本:
+        添加是否开通义诊字段field:
+            PUT /skykingkong_es_test/_mapping/es_doctor?update_all_types
+            {
+                "properties": {
+                    "isOpenFC": {
+                        "type":"boolean"
+                    }
+                }
+            }
+        添加义诊价格字段field:
+            PUT /skykingkong_es_testnf/_mapping/es_doctor?update_all_types
+            {
+                "properties": {
+                    "fcPrice": {
+                        "type": "float"
+                    }
+                }
+            }
+        添加义诊剩余次数field:
+            PUT /skykingkong_es_testnf/_mapping/es_doctor?update_all_types
+            {
+                "properties": {
+                    "todayLeftCount": {
+                        "type": "integer"
+                    }
+                }
+            }
+        添加义诊总次数field:
+            PUT /skykingkong_es_testnf/_mapping/es_doctor?update_all_types
+            {
+                "properties": {
+                    "fcTodayAllCount": {
+                        "type": "integer"
+                    }
+                }
+            }
+        修改修改typeCode为字符串:
+            PUT /skykingkong_es_testnf/_mapping/es_hospital?update_all_types
+            {
+                "properties": {
+                    "type": {
+                        "properties": {
+                            "code": {
+                                "type": "text"
+                            }
+                        }
+                    }
+                }
+            }
+        关键词添加热词:
+            PUT /skykingkong_es_testnf/_mapping/es_keyword?update_all_types
+            {
+                "properties": {
+                    "isDic": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        医生索引添加Rank、RankCode、sex:
+            POST /skykingkong_es_dev/es_doctor/_mapping
+            {
+                "es_doctor": {
+                    "_all": {
+                        "analyzer": "ik_max_word",
+                        "search_analyzer": "ik_max_word",
+                        "term_vector": "no",
+                        "store": "false"
+                    },
+                    "properties": {
+                        "rank": {
+                            "type": "integer"
+                        },
+                        "rankCode": {
+                            "type": "text"
+                        }
+                        "sex": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            }
+    #新增状态
+    POST /skykingkong_es_testnf/es_doctor/_mapping
+    {
+        "es_doctor": {
+            "_all": {
+                "analyzer": "ik_max_word",
+                "search_analyzer": "ik_max_word",
+                "term_vector": "no",
+                "store": "false"
+            },
+            "properties": {
+                "isOpenVC":{
+                    "type":"boolean"
+                },
+                "isOpenPMD":{
+                    "type":"boolean"
+                },
+                "isOpenRET":{
+                    "type":"boolean"
+                },
+                "isOpenFC": {
+                    "type":"boolean"
+                },
+                "isOpenIM":{
+                    "type":"boolean"
+                },
+                "isOpenPhoneConsultation":{
+                    "type":"boolean"
+                },
+                "isOpenFamilyDoctor":{
+                    "type":"boolean"
+                },
+                "imPrice":{
+                    "type":"double"
+                }
+            }
+        }
+    }
+
+操作数据脚本;
+    删除医院所有数据:
+    POST /skykingkong_es_cloud/es_hospital/_delete_by_query
+    {
+        "query":{
+            "match_all": {}
+        }
+    }
+    删除医生所有数据:
+    POST /skykingkong_es_cloud/es_doctor/_delete_by_query
+    {
+        "query":{
+            "match_all": {}
+        }
+    }
+    POST /skykingkong_es_dev/es_help_doc/
+    {
+        "title":"根据查询删除数据",
+        "url":"www.baidu.com"
+    }
+    
+    POST /skykingkong_es_testnf/es_doctor/10758/_update
+    {
+        "doc":{
+            "isOpenFC":true,
+            "fcPrice":1
+        }
+    }
+
+    POST /skykingkong_es_testnf/es_keyword/_update_by_query
+    {
+      "script": {
+        "inline": "ctx._source['isDic'] = false"
+      }
+    }
+
+    POST /skykingkong_es_testnf/es_doctor/_update_by_query
+    {
+      "script": {
+        "inline": "ctx._source['isOpenFC'] = false"
+      }
+    }
+
+    POST /skykingkong_es_testnf/es_doctor/_update_by_query
+    {
+      "script": {
+        "inline": "ctx._source['fcPrice'] = 1"
+      }
+    }
+
+    POST /skykingkong_es_testnf/es_doctor/_update_by_query
+    {
+      "script": {
+        "inline": "ctx._source['todayLeftCount'] = 3"
+      }
+    }
+
+    POST /skykingkong_es_testnf/es_doctor/_update_by_query
+    {
+      "script": {
+        "inline": "ctx._source['fcTodayAllCount'] = 5"
+      }
+    }

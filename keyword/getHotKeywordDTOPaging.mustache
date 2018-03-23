@@ -1,0 +1,30 @@
+{{!查询关键热词列表}}
+{
+  "query" : {
+    "bool" : {
+      "should" : [
+        {{#keyword}}
+        {
+            "match": {
+               "keyword": "{{keyword}}"
+            }
+        }
+        {{/keyword}}
+      ]
+    }
+  },
+  "from":{{page}},
+  "size":{{pageSize}},
+  "sort" : [
+    {
+      "frequency" : {
+        "order" : "desc"
+      }
+    },
+    {
+      "_score" : {
+        "order" : "desc"
+      }
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{{!查询新添加的医生根据创建时间倒排}}
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "term": {
+            "hospital.code": {
+              "value": "{{hospitalCode}}"
+            }
+          }
+        },
+        {
+          "term": {
+            "_type": {
+              "value": "es_doctor_false"
+            }
+          }
+        }
+      ]
+      {{#timestamp}}
+      ,
+      "must": [
+        {
+          "range": {
+            "createTime": {
+              "gt": "{{timestamp}}"
+            }
+          }
+        }
+      ]
+      {{/timestamp}}
+    }
+  },
+  
+  "from": {{page}},
+  "size": {{pageSize}},
+  "sort": [
+    {
+      "createTime": {
+        "order": "desc"
+      }
+    }
+  ]
+}

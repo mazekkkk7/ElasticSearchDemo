@@ -1,0 +1,47 @@
+{{!查询医院详情信息根据医院code}}
+{
+    "query" : {
+    "bool" : {
+      "should" : [
+        {{#hospitalCode}}
+        {
+          "term" : {
+            "code" : {
+              "value" : "{{hospitalCode}}",
+              "boost" : 1.0
+            }
+          }
+        },
+        {{/hospitalCode}}
+        {
+          "term" : {
+            "_type" : {
+              "value" : "es_doctor_false",
+              "boost" : 1.0
+            }
+          }
+        }
+      ],
+      "disable_coord" : false,
+      "adjust_pure_negative" : true,
+      "boost" : 1.0
+    }
+   },
+  "sort" : [
+    {
+      "score" : {
+        "order" : "desc"
+      }
+    }
+  ],
+  "_source": [
+        "{{source_cityCode}}",
+        "{{source_categoryCode}}",
+        "{{source_name}}",
+        "{{source_image}}",
+        "{{source_levelName}}",
+        "{{source_address}}",
+        "{{source_phone}}",
+        "{{source_deptList}}"
+    ]
+}

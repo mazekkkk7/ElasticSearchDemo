@@ -1,0 +1,172 @@
+{{! keywordDefaultSearch 关键字未查询到结果时默认推荐 默认显示科室数量 1000 聚合器不能使用分页(硬伤) }}
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "isExpert": {
+              "value": "true"
+            }
+          }
+        },
+        {
+          "term": {
+            "isReal": {
+              "value": "true"
+            }
+          }
+        },
+        {
+           "range": {
+              "rank": {
+                 "gte": 3
+              }
+           }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "distinct_dept": {
+      "nested": {
+        "path": "dept"
+      },
+      "aggs": {
+        "distinct_dept": {
+          "terms": {
+            "field": "dept.code",
+            "size": 1000
+            {{#defaultRecomment}},
+            "order":{
+                  "root>stats.min":"asc"
+            }
+            {{/defaultRecomment}}
+            {{#synthesise}},
+            "order":{
+                  "root>stats.min":"asc"
+            }
+            {{/synthesise}}
+            {{#expert}},
+            "order":{
+                  "root>stats.min":"asc"
+            }
+            {{/expert}}
+            {{#score}},
+            "order":{
+                  "root>stats.max":"desc"
+            }
+            {{/score}}
+            {{#orderCount}},
+            "order":{
+                  "root>stats.max":"desc"
+            }
+            {{/orderCount}}
+            {{#serviceCount}},
+            "order":{
+                  "root>stats.max":"desc"
+            }
+            {{/serviceCount}}
+            {{#priceDesc}},
+            "order":{
+                  "root>stats.max":"desc"
+            }
+            {{/priceDesc}}
+            {{#priceAsc}},
+            "order":{
+                  "root>stats.max":"asc"
+            }
+            {{/priceAsc}}
+            {{#createTimeDesc}},
+            "order":{
+                  "root>stats.max":"desc"
+            }
+            {{/createTimeDesc}}
+          },
+          "aggs": {
+            "root": {
+              "reverse_nested": {},
+              "aggs": {
+                {{#defaultRecomment}}
+                "stats": {
+                    "extended_stats": {     
+                        "field": "level.order"
+                    }
+                },
+                {{/defaultRecomment}}
+                {{#synthesise}}
+                "stats": {
+                    "extended_stats": {     
+                        "field": "level.order"
+                    }
+                },
+                {{/synthesise}}
+                {{#expert}}
+                "stats": {
+                    "extended_stats": {     
+                        "field": "level.order"
+                    }
+                },
+                {{/expert}}
+                {{#score}}
+                "stats": {
+                    "extended_stats": {     
+                        "field": "score"
+                    }
+                },
+                {{/score}}
+                {{#orderCount}}
+                "stats": {
+                    "extended_stats": {     
+                        "field": "orderCount"
+                    }
+                },
+                {{/orderCount}}
+                {{#serviceCount}}
+                "stats": {
+                    "extended_stats": {     
+                        "field": "serviceCount"
+                    }
+                },
+                {{/serviceCount}}
+                {{#priceDesc}}
+                "stats": {
+                    "extended_stats": {     
+                        "field": "vcPrice"
+                    }
+                },
+                {{/priceDesc}}
+                {{#priceAsc}}
+                "stats": {
+                    "extended_stats": {     
+                        "field": "vcPrice"
+                    }
+                },
+                {{/priceAsc}}
+                {{#createTimeDesc}}
+                "stats": {
+                    "extended_stats": {     
+                        "field": "createTime"
+                    }
+                },
+                {{/createTimeDesc}}
+                "rated": {
+                  "top_hits": {
+                    "sort" : 
+                     {
+                        "level.order" : {
+                          "order" : "asc"
+                        }
+                     },
+                    "size": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

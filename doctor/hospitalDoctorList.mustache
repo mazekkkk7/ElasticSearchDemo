@@ -1,0 +1,128 @@
+{{!查询医院内医生,根据关键字和排序条件}}
+{
+  "query": {
+    "bool": {
+        "minimum_should_match": "50%",
+        "should": [
+            {{#keyword}}
+            {
+                "nested" : {
+                "path" : "dept",
+                    "query" : {
+                          "match": {
+                            "dept.name": {
+                              "query": "{{keyword}}",
+                              "boost": {{deptBoost}}
+                            }
+                          }
+                    }
+                }
+            },
+            {
+              "match": {
+                "name": {
+                  "query": "{{keyword}}",
+                  "boost": {{doctorBoost}}
+                }
+              }
+            },
+            {{/keyword}}
+            {
+                "term":{
+                    "_type":"es_doctor_false"
+                }
+            }
+        ], 
+        "filter":[
+            {{#hospitalCode}}
+            {
+                "term":{
+                    "hospital.code":"{{hospitalCode}}"
+                }
+            },
+            {{/hospitalCode}}
+            {{#isOnlyOnline}}
+            {
+                "term":{
+                    "isReal":{{isOnlyOnline}}
+                }
+            },
+            {{/isOnlyOnline}}
+            {{#deptCode}}
+            {
+                "nested" : {
+                "path" : "dept",
+                    "query" : {
+                        "bool" : {
+                            "must" : [
+                            { "term" : {"dept.code" : "{{deptCode}}"} }
+                            ]
+                        }
+                    }
+                }
+            },
+            {{/deptCode}}
+            {
+                "term":{
+                    "isExpert":true
+                }
+            },
+            {
+                "term":{
+                    "_type":"es_doctor"
+                }
+            }
+
+        ]
+    }
+  },
+  "from":{{page}},
+  "size":{{pageSize}}, 
+  "sort" : [
+    {{#synthesise}}
+      {
+        "level.order" : {
+          "order" : "asc"
+        }
+      },
+      {
+        "score" : {
+          "order" : "desc"
+        }
+      },
+    {{/synthesise}}
+    {{#expert}}
+      {
+        "level.order" : {
+          "order" : "asc"
+        }
+      },
+    {{/expert}}
+    {{#score}}
+      {
+          "score":{
+              "order": "desc"
+          }
+      },
+    {{/score}}
+    {{#orderCount}}
+      {
+        "orderCount":{
+            "order": "desc"
+        }
+      },
+    {{/orderCount}}
+    {{#serviceCount}}
+      {
+        "serviceCount":{
+            "order": "desc"
+        }
+      },
+    {{/serviceCount}}
+    {
+        "_score" : {
+          "order" : "desc"
+        }
+    }
+  ]
+}

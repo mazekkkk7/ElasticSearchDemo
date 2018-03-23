@@ -1,0 +1,30 @@
+/**
+ * mapping名称es_help_doc 系统常见问题
+ * id 主键
+ * title 标题
+ * url 链接
+ */
+POST /skykingkong_es_dev/es_help_doc/_mapping
+{
+    "es_help_doc": {
+        "_all": {
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_max_word",
+            "term_vector": "no",
+            "store": "false"
+        },
+        "properties": {
+            "id": {
+                "type": "text"
+            },
+            "title": {
+                "type": "text",
+                "analyzer": "ik_max_word"
+            },
+            "url":{
+                "type":"text",
+                "analyzer": "standard"
+            }
+        }
+    }
+}

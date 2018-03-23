@@ -1,0 +1,23 @@
+{{!获取所有医生}}
+{   
+    "query": {
+        "match_all": {
+            
+        }
+    },
+    "from":{{page}},
+  	"size":{{pageSize}},
+  	"sort": [
+       {
+          "orderCount": {
+             "order": "asc"
+          }
+       },
+       {
+          "serviceCount": {
+             "order": "asc"
+          }
+       }
+    ]
+
+}
