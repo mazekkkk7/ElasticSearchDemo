@@ -1,7 +1,7 @@
 /**
  * mapping名称es_doctor 医生
  * image 图片
- * name 医生名称 
+ * name 医生名称
  * sex 医生性别
  * hospital 医院
  * hospital.name 医院名称
@@ -37,6 +37,9 @@
  * canOpenVC 能否开通视频咨询
  * canOpenRET 能否开通远程急救
  * canOpenPMD 能否开通私人医生
+ * canOpenIM  能否开通IM
+ * canOpenPhoneConsultation 能否开通电话咨询
+ * canOpenFamilyDoctor 能否开通家庭医生
  * fans 粉丝量
  * serviceCount 服务人次
  * orderCount 订单量
@@ -54,194 +57,203 @@
  */
 POST /skykingkong_es_dev/es_doctor/_mapping
 {
-    "es_doctor": {
-        "_all": {
+  "es_doctor": {
+    "_all": {
+      "analyzer": "ik_max_word",
+      "search_analyzer": "ik_max_word",
+      "term_vector": "no",
+      "store": "false"
+    },
+    "properties": {
+      "image": {
+        "type": "text"
+      },
+      "name": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_max_word",
+        "include_in_all": "true"
+      },
+      "sex": {
+        "type": "integer"
+      },
+      "hospital": {
+        "properties": {
+          "name": {
+            "type": "text",
             "analyzer": "ik_max_word",
             "search_analyzer": "ik_max_word",
-            "term_vector": "no",
-            "store": "false"
-        },
-        "properties": {
-			"image": {
-                "type": "text"
-            },
-            "name": {
-                "type": "text",
-                "analyzer": "ik_max_word",
-                "search_analyzer": "ik_max_word",
-                "include_in_all": "true"
-            },
-            "sex": {
-                "type": "integer"
-            },
-            "hospital": {
-                "properties": {
-                    "name": {
-                        "type": "text",
-                        "analyzer": "ik_max_word",
-                        "search_analyzer": "ik_max_word",
-                        "include_in_all": "true"
-                    }
-                }
-            },
-            "level": {
-                "properties": {
-                    "code":{
-                        "type":"text"
-                    },
-                    "name": {
-                        "type": "text",
-                        "analyzer": "ik_max_word",
-                        "search_analyzer": "ik_max_word",
-                        "include_in_all": "true"
-                    },
-                    "order": {
-                        "type": "integer"
-                    }
-                    
-                }
-            },
-            "dept": {
-                "type":"nested",
-                "properties": {
-                    "name": {
-                        "type": "text",
-                        "analyzer": "ik_max_word",
-                        "search_analyzer": "ik_max_word",
-                        "include_in_all": "true"
-                    },
-                    "code":{
-                        "type":"text",
-                        "fielddata": true
-                    }
-                }
-            },
-			"area": {
-                "properties": {
-                    "name": {
-                        "type": "text",
-                        "analyzer": "ik_max_word",
-                        "search_analyzer": "ik_max_word",
-                        "include_in_all": "true"
-                    }
-                }
-            },
-            "tags": {
-                "type": "text",
-                "analyzer": "ik_max_word",
-                "search_analyzer": "ik_max_word",
-                "include_in_all": "true"
-            },
-			"biography": {
-                "type": "text"
-            },
-			"academicAchievements": {
-                "type": "text"
-            },
-            "coordinates": {
-                "type": "geo_point"
-            },
-            "score": {
-                "type": "double"
-            },
-            "vcPrice": {
-                "type": "double"
-            },
-            "fcPrice": {
-                "type": "double"
-            },
-            "pmdPrice": {
-                "type": "double"
-            },
-            "retPrice": {
-                "type": "double"
-            },
-    		"isExpert": {
-                "type": "boolean"
-            },
-			"isVisit": {
-                "type": "boolean"
-            },
-			"isOpenVC":{
-				"type":"boolean"
-			},
-			"isOpenPMD":{
-				"type":"boolean"
-			},
-			"isOpenRET":{
-				"type":"boolean"
-			},
-            "isOpenFC": {
-                "type":"boolean"
-            },
-            "isOpenIM":{
-                "type":"boolean"
-            },
-            "isOpenPhoneConsultation":{
-                "type":"boolean"
-            },
-            "isOpenFamilyDoctor":{
-                "type":"boolean"
-            },
-            "isReal":{
-    			"type":"boolean"
-			},
-            "canOpenVC":{
-                "type":"boolean"
-            },
-            "canOpenRET":{
-                "type":"boolean"
-            },
-            "canOpenPMD":{
-                "type":"boolean"
-            },
-			"fans":{
-				"type":"integer"
-			},
-			"serviceCount":{
-				"type":"integer"
-			},
-            "orderCount":{
-    			"type":"integer"
-			},
-			"recommendPatient":{
-				"type":"integer"
-			},
-			"recommendDoctor":{
-				"type":"integer"
-			},
-			"assess":{
-				"type":"integer"
-			},
-			"assessTags": {
-                "type": "text",
-                "analyzer": "ik_max_word",
-                "search_analyzer": "ik_max_word",
-                "include_in_all": "true"
-            },
-			"distance":{
-				"type":"double"
-			},
-            "todayLeftCount": {
-                "type": "integer"
-            },
-            "fcTodayAllCount": {
-                "type": "integer"
-            },
-            "rank": {
-                "type": "integer"
-            },
-            "rankCode": {
-                "type": "text"
-            },
-            "createTime":{
-                "type": "date",
-                "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
-            },
-            "updateTime":{
-                "type": "date",
-                "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
-            }
+            "include_in_all": "true"
+          }
         }
+      },
+      "level": {
+        "properties": {
+          "code": {
+            "type": "text"
+          },
+          "name": {
+            "type": "text",
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_max_word",
+            "include_in_all": "true"
+          },
+          "order": {
+            "type": "integer"
+          }
+
+        }
+      },
+      "dept": {
+        "type": "nested",
+        "properties": {
+          "name": {
+            "type": "text",
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_max_word",
+            "include_in_all": "true"
+          },
+          "code": {
+            "type": "text",
+            "fielddata": true
+          }
+        }
+      },
+      "area": {
+        "properties": {
+          "name": {
+            "type": "text",
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_max_word",
+            "include_in_all": "true"
+          }
+        }
+      },
+      "tags": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_max_word",
+        "include_in_all": "true"
+      },
+      "biography": {
+        "type": "text"
+      },
+      "academicAchievements": {
+        "type": "text"
+      },
+      "coordinates": {
+        "type": "geo_point"
+      },
+      "score": {
+        "type": "double"
+      },
+      "vcPrice": {
+        "type": "double"
+      },
+      "fcPrice": {
+        "type": "double"
+      },
+      "pmdPrice": {
+        "type": "double"
+      },
+      "retPrice": {
+        "type": "double"
+      },
+      "isExpert": {
+        "type": "boolean"
+      },
+      "isVisit": {
+        "type": "boolean"
+      },
+      "isOpenVC": {
+        "type": "boolean"
+      },
+      "isOpenPMD": {
+        "type": "boolean"
+      },
+      "isOpenRET": {
+        "type": "boolean"
+      },
+      "isOpenFC": {
+        "type": "boolean"
+      },
+      "isOpenIM": {
+        "type": "boolean"
+      },
+      "isOpenPhoneService": {
+        "type": "boolean"
+      },
+      "isOpenFamilyDoctor": {
+        "type": "boolean"
+      },
+      "isReal": {
+        "type": "boolean"
+      },
+      "canOpenVC": {
+        "type": "boolean"
+      },
+      "canOpenRET": {
+        "type": "boolean"
+      },
+      "canOpenPMD": {
+        "type": "boolean"
+      },
+      "canOpenIM": {
+        "type": "boolean"
+      },
+      "canOpenPhoneConsultation": {
+        "type": "boolean"
+      },
+      "canOpenFamilyDoctor": {
+        "type": "boolean"
+      },
+      "fans": {
+        "type": "integer"
+      },
+      "serviceCount": {
+        "type": "integer"
+      },
+      "orderCount": {
+        "type": "integer"
+      },
+      "recommendPatient": {
+        "type": "integer"
+      },
+      "recommendDoctor": {
+        "type": "integer"
+      },
+      "assess": {
+        "type": "integer"
+      },
+      "assessTags": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_max_word",
+        "include_in_all": "true"
+      },
+      "distance": {
+        "type": "double"
+      },
+      "todayLeftCount": {
+        "type": "integer"
+      },
+      "fcTodayAllCount": {
+        "type": "integer"
+      },
+      "rank": {
+        "type": "integer"
+      },
+      "rankCode": {
+        "type": "text"
+      },
+      "createTime": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      },
+      "updateTime": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      }
     }
+  }
 }
