@@ -1,0 +1,18 @@
+{
+  "size": 0,
+  "aggs": {
+    "makes": {
+      "terms": {
+        "field": "make",
+        "size": 10
+      },
+      "aggs": {
+        "stats": {
+          "extended_stats": {
+            "field": "price"
+          }
+        }
+      }
+    }
+  }
+}

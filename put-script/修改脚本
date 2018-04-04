@@ -114,6 +114,24 @@
                 },
                 "imPrice":{
                     "type":"double"
+                },
+                "canOpenVC": {
+                  "type": "boolean"
+                },
+                "canOpenRET": {
+                  "type": "boolean"
+                },
+                "canOpenPMD": {
+                  "type": "boolean"
+                },
+                "canOpenIM": {
+                  "type": "boolean"
+                },
+                "canOpenPhoneConsultation": {
+                  "type": "boolean"
+                },
+                "canOpenFamilyDoctor": {
+                  "type": "boolean"
                 }
             }
         }
@@ -139,7 +157,7 @@
         "title":"根据查询删除数据",
         "url":"www.baidu.com"
     }
-    
+
     POST /skykingkong_es_testnf/es_doctor/10758/_update
     {
         "doc":{
