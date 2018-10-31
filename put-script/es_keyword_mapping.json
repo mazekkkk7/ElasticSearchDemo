@@ -22,7 +22,7 @@ POST /skykingkong_es_dev/es_keyword/_mapping
         "type": "text"
       },
       "frequency": {
-        "type": "integer"
+        "type": "long"
       },
       "isDic": {
         "type": "boolean"

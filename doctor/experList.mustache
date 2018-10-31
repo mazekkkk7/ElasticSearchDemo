@@ -2,7 +2,7 @@
 {
     "query" : {
     "bool" : {
-      "filter": [ 
+      "filter": [
         {{#hospitalCode}}{ "term":  { "hospital.code": "{{hospitalCode}}" }},{{/hospitalCode}}
         {{#deptCode}}
             {

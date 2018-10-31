@@ -1,5 +1,9 @@
 {
-  "size": 0,
+  "query": {
+    "match": {
+      "make": "ford"
+    }
+  },
   "aggs": {
     "colors": {
       "terms": {

@@ -1,0 +1,26 @@
+{
+  "size": 0,
+  "query": {
+    "match": {
+      "make": "ford"
+    }
+  },
+  "aggs": {
+    "recent_sales": {
+      "filter": {
+        "range": {
+          "sold": {
+            "from": "2014-05"
+          }
+        }
+      },
+      "aggs": {
+        "average_price": {
+          "avg": {
+            "field": "price"
+          }
+        }
+      }
+    }
+  }
+}

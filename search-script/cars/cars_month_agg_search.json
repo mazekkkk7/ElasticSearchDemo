@@ -1,0 +1,36 @@
+{
+  "size": 0,
+  "aggs": {
+    "sales": {
+      "date_histogram": {
+        "field": "sold",
+        "interval": "month",
+        "format": "yyyy-MM-dd",
+        "min_doc_count": 0,
+        "extended_bounds": {
+          "min": "2014-01-01",
+          "max": "2014-12-31"
+        }
+      },
+      "aggs": {
+        "per_make_sum": {
+          "terms": {
+            "field": "make"
+          },
+          "aggs": {
+            "sum_price": {
+              "sum": {
+                "field": "price"
+              }
+            }
+          }
+        },
+        "total_sum": {
+          "sum": {
+            "field": "price"
+          }
+        }
+      }
+    }
+  }
+}

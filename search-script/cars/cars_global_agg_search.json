@@ -1,0 +1,25 @@
+{
+  "size": 0,
+  "query": {
+    "match": {
+      "make": "ford"
+    }
+  },
+  "aggs": {
+    "single_avg_price": {
+      "avg": {
+        "field": "price"
+      }
+    },
+    "all": {
+      "global": {},
+      "aggs": {
+        "avg_price": {
+          "avg": {
+            "field": "price"
+          }
+        }
+      }
+    }
+  }
+}
